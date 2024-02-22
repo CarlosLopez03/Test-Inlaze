@@ -1,0 +1,2 @@
+TEST_DATABASE='Va la url del mongo'
+JWT_TOKEN='Va el token de jwt'
