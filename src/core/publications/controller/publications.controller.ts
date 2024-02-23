@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Post,
   Put,
   Query,
@@ -17,7 +18,9 @@ import { Response } from 'express';
 import { PublicationsService } from '../service/publications.service';
 import {
   CreatePublicationDto,
+  FilterDto,
   IdPublicationDto,
+  PaginationDto,
   UpdatePublicationDto,
 } from '../dto/publication.dto';
 import { ICustomRequest } from 'src/shared/interfaces/ICustomRequest.interface';
@@ -27,6 +30,37 @@ import { PublicationOwnerGuard } from '../guard/publication-owner.guard';
 @ApiTags('Post')
 export class PublicationsController {
   constructor(private readonly publicationsService: PublicationsService) {}
+
+  /**
+   * Get filtered list of publications with pagination.
+   * @param {PaginationDto} paginationDto Pagination options.
+   * @param {FilterDto} filterDto Filter options.
+   * @param {Response} res Response object.
+   * @returns {Promise<Response>} The HTTP response.
+   */
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de publicaciones.',
+  })
+  @ApiResponse({ status: 400, description: 'Error en la solicitud.' })
+  @ApiBearerAuth()
+  @Get("")
+  async filterPublications(
+    @Query(ValidationPipe) paginationDto: PaginationDto,
+    @Query(ValidationPipe) filterDto: FilterDto,
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      const RESPONSE = await this.publicationsService.filterPublications(
+        paginationDto,
+        filterDto,
+      );
+      return res.status(RESPONSE?.['code'] || 200).json(RESPONSE);
+    } catch (error) {
+      console.warn('Error método(controller): allPublications');
+      return res.status(400).json(error);
+    }
+  }
 
   /**
    * Creates a new publication.

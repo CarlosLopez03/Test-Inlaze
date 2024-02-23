@@ -1,5 +1,13 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class IdPublicationDto {
   @ApiProperty({ description: 'Id de la publicación.' })
@@ -31,3 +39,25 @@ export class CreatePublicationDto {
 }
 
 export class UpdatePublicationDto extends PartialType(CreatePublicationDto) {}
+
+export class PaginationDto {
+  @IsOptional()
+  @IsNumber({}, { message: 'Debe ser un valor entero.' })
+  @Min(1)
+  page?: number;
+
+  @IsOptional()
+  @IsNumber({}, { message: 'Debe ser un valor entero.' })
+  @Min(1)
+  @Max(50)
+  limit?: number;
+}
+
+export class FilterDto {
+  @IsOptional()
+  @IsString({ message: 'Deben ser caractares.' })
+  userId?: string;
+
+  @IsOptional()
+  likes?: object;
+}

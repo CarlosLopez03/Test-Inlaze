@@ -3,6 +3,7 @@ export interface IResponse {
   state?: boolean;
   message?: string;
   token?: string;
+  data?: Array<object>;
 }
 
 export interface IErrorCatch {

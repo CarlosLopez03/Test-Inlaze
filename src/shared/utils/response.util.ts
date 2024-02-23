@@ -9,12 +9,14 @@ export const responseSucess = ({
   code = 200,
   message = 'sucess',
   token = undefined,
+  data = undefined,
 }: IResponse): IResponse => {
   return {
     state: true,
     code,
     message,
     token,
+    data,
   };
 };
 

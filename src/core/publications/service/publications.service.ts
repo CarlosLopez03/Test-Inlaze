@@ -7,12 +7,106 @@ import { IPublications } from '../interface/IPublication.interface';
 import { IResponse } from 'src/shared/interfaces/IResponse.interface';
 import { responseFail, responseSucess } from 'src/shared/utils/response.util';
 import { dateFunctionSave } from 'src/shared/function/dateFunction.function';
+import { FilterDto, PaginationDto } from '../dto/publication.dto';
 
 @Injectable()
 export class PublicationsService {
   constructor(
     @InjectModel('Posts') private publicationModel: Model<IPublications>,
   ) {}
+
+  /**
+   * Filters publications based on the provided criteria.
+   * @param {PaginationDto} paginationDto DTO for pagination.
+   * @param {FilterDto} filterDto DTO for publication filters.
+   * @returns A response containing the filtered publications.
+   */
+  async filterPublications(
+    paginationDto: PaginationDto,
+    filterDto: FilterDto,
+  ): Promise<IResponse> {
+    try {
+      const { page = 1, limit = 10 } = paginationDto;
+      const { userId, likes } = filterDto;
+
+      // Build Query
+      const QUERY: FilterDto = {};
+
+      if (userId) {
+        QUERY['userId'] = userId;
+      }
+
+      if (likes) {
+        QUERY['likes'] = { $gte: likes };
+      }
+
+      const PUBLICATIONS_FILTER = await this.publicationModel.aggregate([
+        {
+          $match: QUERY,
+        },
+        {
+          $project: { _id: 0, title: 1, content: 1, createdAt: 1, userId: 1 },
+        },
+        {
+          $skip: (page - 1) * limit,
+        },
+        {
+          $limit: limit,
+        },
+        {
+          $lookup: {
+            from: 'Users',
+            let: {
+              userId: { $toString: '$userId' },
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: [{ $toString: '$_id' }, '$$userId'],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  fullName: 1,
+                },
+              },
+            ],
+            as: 'dataUser',
+          },
+        },
+        {
+          $addFields: {
+            nameUser: { $arrayElemAt: ['$dataUser', 0] },
+          },
+        },
+        {
+          $unset: ['dataUser'],
+        },
+        {
+          $project: {
+            title: 1,
+            content: 1,
+            createdAt: 1,
+            user: '$nameUser.fullName',
+          },
+        },
+      ]);
+
+      return responseSucess({
+        data: PUBLICATIONS_FILTER,
+      });
+    } catch (error) {
+      console.log(error);
+
+      return responseFail({
+        message: 'Error en la obtención de las publicaciones.',
+        state: false,
+      });
+    }
+  }
 
   /**
    * Creates a new publication.
