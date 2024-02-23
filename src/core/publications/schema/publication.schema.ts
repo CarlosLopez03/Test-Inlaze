@@ -31,6 +31,10 @@ export class Publications extends Document {
   @ApiProperty({ description: 'Usuario que creó la publicación.' })
   @Prop()
   userId: string;
+
+  @ApiProperty({ description: 'Usuarios que han dado like a la publicación.' })
+  @Prop()
+  userLikes: string[];
 }
 
 export const PUBLICATIONS_SCHEMA = SchemaFactory.createForClass(Publications);

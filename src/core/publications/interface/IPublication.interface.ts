@@ -4,6 +4,7 @@ export interface IPublications {
   content?: string;
   likes?: number;
   userId?: string;
+  userLikes?: string[];
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;

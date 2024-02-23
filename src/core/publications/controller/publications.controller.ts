@@ -44,7 +44,7 @@ export class PublicationsController {
   })
   @ApiResponse({ status: 400, description: 'Error en la solicitud.' })
   @ApiBearerAuth()
-  @Get("")
+  @Get('')
   async filterPublications(
     @Query(ValidationPipe) paginationDto: PaginationDto,
     @Query(ValidationPipe) filterDto: FilterDto,
@@ -150,6 +150,38 @@ export class PublicationsController {
       return res.status(RESPONSE?.['code'] || 200).json(RESPONSE);
     } catch (error) {
       console.warn('Error método(controller): deletePublication');
+      return res.status(400).json(error);
+    }
+  }
+
+  /**
+   * Endpoint para agregar un like a una publicación.
+   * @param {IdPublicationDto} publication - DTO que contiene el ID de la publicación.
+   * @param {Response} res - Objeto de respuesta HTTP.
+   * @param {ICustomRequest} req - The custom request object containing user information.
+   * @returns {Promise<Response>} - Respuesta JSON con el resultado de la operación.
+   */
+  @Post('like')
+  @ApiResponse({
+    status: 200,
+    description: 'Like agregado exitosamente!.',
+  })
+  @ApiResponse({ status: 400, description: 'Error en la solicitud.' })
+  @ApiBearerAuth()
+  async likePublication(
+    @Query(ValidationPipe) publication: IdPublicationDto,
+    @Res() res: Response,
+    @Req() req: ICustomRequest,
+  ): Promise<Response> {
+    try {
+      const { userId } = req?.userExtract;
+      const RESPONSE = await this.publicationsService.likePublication(
+        publication?.idPublication,
+        userId,
+      );
+      return res.status(RESPONSE?.['code'] || 200).json(RESPONSE);
+    } catch (error) {
+      console.warn('Error método(controller): likePublication');
       return res.status(400).json(error);
     }
   }

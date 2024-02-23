@@ -168,10 +168,9 @@ export class PublicationsService {
         });
       }
 
-      return {
-        state: true,
+      return responseSucess({
         message: 'Publicación actualizada exitosamente.',
-      };
+      });
     } catch (error) {
       return responseFail({
         message: 'Error en la actualización de la publicación.',
@@ -203,13 +202,53 @@ export class PublicationsService {
         });
       }
 
-      return {
-        state: true,
+      return responseSucess({
         message: 'Publicación eliminado correctamente.',
-      };
+      });
     } catch (error) {
       return responseFail({
         message: 'Error en la eliminación de la publicación.',
+        state: false,
+      });
+    }
+  }
+
+  /**
+   * Adds a like to the specified publication.
+   * @param {string} idPublication - The ID of the publication to like.
+   * @param {string} userId - The ID of the user who is liking the publication.
+   * @returns {Promise<IResponse>} A Promise that resolves to the response object indicating success or failure.
+   */
+  async likePublication(idPublication: string, userId: string): Promise<IResponse> {
+    try {
+      // Valid publication
+      const PUBLICATION = await this.publicationModel.findOne(
+        {
+          _id: idPublication,
+        },
+        { _id: 1, userLikes: 1, likes: 1 },
+      );
+
+      if (!PUBLICATION)
+        return responseFail({ message: 'La publicación no existe.' });
+
+      // Verify if the user has already liked
+      if (PUBLICATION?.userLikes?.includes(userId))
+        return responseFail({
+          message: 'El usuario ya ha dado like a esta publicación.',
+        });
+
+      PUBLICATION.userLikes.push(userId);
+      PUBLICATION.likes += 1;
+
+      await PUBLICATION.save();
+
+      return responseSucess({
+        message: 'Like agregado exitosamente.',
+      });
+    } catch (error) {
+      return responseFail({
+        message: 'Error al dar Like a la publicación.',
         state: false,
       });
     }
