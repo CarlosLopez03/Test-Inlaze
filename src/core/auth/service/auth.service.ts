@@ -80,6 +80,9 @@ export class AuthService {
         password: HASHED_PASSWORD,
       });
 
+      // Send confirmation email using Redis
+      await this.redisService.aggregateToQueue(res?.email);
+
       return responseSucess({
         message: RESPONSE?.message,
       });

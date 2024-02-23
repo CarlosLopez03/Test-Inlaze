@@ -1,2 +1,6 @@
 TEST_DATABASE='Va la url del mongo'
 JWT_TOKEN='Va el token de jwt'
+
+# Mail
+API_KEY='API_KEY'
+SECRET_KEY='SECRET_KEy'

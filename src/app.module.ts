@@ -4,6 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { CoreModule } from './core/core.module';
+import { EmailCronService } from './shared/cronjob/email-cron.service';
+import { RedisModule } from './shared/redis/redis.module';
+import { RedisService } from './shared/redis/redis.service';
+import { NodemailerService } from './shared/mail/nodemailer.service';
 
 @Module({
   imports: [
@@ -18,6 +22,8 @@ import { CoreModule } from './core/core.module';
       }),
     }),
     CoreModule,
+    RedisModule,
   ],
+  providers: [RedisService, NodemailerService, EmailCronService],
 })
 export class AppModule {}

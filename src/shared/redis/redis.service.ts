@@ -51,4 +51,34 @@ export class RedisService {
     const PROPERTY_DEL = await this.redisClient.del(key);
     return PROPERTY_DEL > 0 ? true : false;
   }
+
+  /**
+   * Adds an email to the Redis queue.
+   * @param {string} email - The email to be added to the queue.
+   * @returns {Promise<number>} A promise that resolves with the new length of the queue.
+   */
+  async aggregateToQueue(email: string): Promise<number> {
+    return await this.redisClient.lpush('email_queue', email);
+  }
+
+  /**
+   * Retrieves all emails from the Redis queue.
+   * @returns {Promise<string[]>} A promise that resolves with an array of emails.
+   */
+  async extractToQueue(): Promise<string[]> {
+    return await this.redisClient.lrange('email_queue', 0, -1);
+  }
+
+  /**
+   * Removes emails from the Redis queue.
+   * @param {number} batchLength - The number of elements to remove.
+   * @param {(string | number)} element - The element or elements to remove from the queue.
+   * @returns {Promise<number>} A promise that resolves with the number of elements removed.
+   */
+  async deleteToQueue(
+    batchLength: number,
+    element: string | number,
+  ): Promise<number> {
+    return await this.redisClient.lrem('email_queue', batchLength, element);
+  }
 }
