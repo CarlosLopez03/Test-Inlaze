@@ -4,6 +4,12 @@ const Mailjet = require('node-mailjet');
 
 @Injectable()
 export class NodemailerService {
+  /**
+   * Sends a confirmation email to the specified recipient.
+   * @param {string} to - The email address of the recipient.
+   * @returns {Promise<void>} A Promise indicating the completion of the email sending process.
+   * @throws {Error} If there is an error sending the email.
+   */
   async sendConfirmationEmail(to: string): Promise<void> {
     try {
       const MAIL_JET = Mailjet.apiConnect(
