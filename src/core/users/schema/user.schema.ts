@@ -8,31 +8,31 @@ export class User extends Document {
   @Prop()
   fullName: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'Edad del usuario.' })
   @Prop()
   age: number;
 
-  @ApiProperty({ description: 'Correo electrónico del usuario' })
+  @ApiProperty({ description: 'Correo electrónico del usuario.' })
   @Prop()
   email: string;
 
-  @ApiProperty({ description: 'Contraseña del usuario' })
+  @ApiProperty({ description: 'Contraseña del usuario.' })
   @Prop()
   password: string;
 
-  @ApiProperty({ description: 'Publicaciones del usuario', type: [String] })
+  @ApiProperty({ description: 'Publicaciones del usuario.', type: [String] })
   @Prop()
   posts: string[];
 
-  @ApiPropertyOptional({ description: 'Fecha de creación del usuario' })
+  @ApiPropertyOptional({ description: 'Fecha de creación del usuario.' })
   @Prop()
   createdAt: Date;
 
-  @ApiPropertyOptional({ description: 'Fecha de actualización del usuario' })
+  @ApiPropertyOptional({ description: 'Fecha de actualización del usuario.' })
   @Prop()
   updatedAt: Date;
 
-  @ApiPropertyOptional({ description: 'Fecha de eliminación del usuario' })
+  @ApiPropertyOptional({ description: 'Fecha de eliminación del usuario.' })
   @Prop()
   deletedAt: Date;
 }

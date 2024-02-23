@@ -14,9 +14,3 @@ export class EmailUserDto {
 }
 
 export class UpdateUserDto extends PartialType(RegisterUserDto) {}
-
-export class DeleteUserDto {
-  @ApiProperty({ description: 'Id del usuario a eliminar.' })
-  @IsNotEmpty({ message: 'Se debe proporcionar un idUser.' })
-  idUser: string;
-}
